@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "projects": {
+    "docs": {
+      "projectType": "application",
+      "root": "apps/docs",
+      "sourceRoot": "apps/docs/src",
+      "architect": {
+        "build": {
+          "builder": "@nx-plus/docusaurus:browser",
+          "options": {
+            "outputPath": "dist/apps/docs"
+          }
+        },
+        "serve": {
+          "builder": "@nx-plus/docusaurus:dev-server",
+          "options": {
+            "port": 3000
+          }
+        }
+      }
+    },
+    "test-library": {
+      "root": "libs/test-library",
+      "sourceRoot": "libs/test-library/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/test-library/**/*.{ts,tsx,js,jsx}"]
+          }
+        },
+        "build": {
+          "builder": "@nrwl/web:package",
+          "options": {
+            "outputPath": "dist/libs/test-library",
+            "tsConfig": "libs/test-library/tsconfig.lib.json",
+            "project": "libs/test-library/package.json",
+            "entryFile": "libs/test-library/src/index.ts",
+            "external": ["react", "react-dom", "react-is", "styled-components"],
+            "babelConfig": "@nrwl/react/plugins/bundle-babel",
+            "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+            "assets": [
+              {
+                "glob": "README.md",
+                "input": ".",
+                "output": "."
+              }
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/test-library/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "storybook": {
+          "builder": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "libs/test-library/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "builder": "@nrwl/storybook:build",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/test-library",
+            "config": {
+              "configFolder": "libs/test-library/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/react"
+  },
+  "schematics": {
+    "@nrwl/react": {
+      "application": {
+        "style": "styled-components",
+        "linter": "eslint",
+        "babel": true
+      },
+      "component": {
+        "style": "styled-components"
+      },
+      "library": {
+        "style": "styled-components",
+        "linter": "eslint"
+      }
+    }
+  }
+}
